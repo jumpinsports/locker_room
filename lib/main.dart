@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:locker_room/constants/colors.dart';
 import 'package:locker_room/routing/app_router.dart';
 
 import 'firebase_options.dart';
@@ -23,7 +25,17 @@ class MyApp extends ConsumerWidget {
     return MaterialApp.router(
       routerConfig: goRouter,
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.indigo),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: kMainDarkColor,
+          secondary: kMainLightColor,
+        ),
+        progressIndicatorTheme: const ProgressIndicatorThemeData(
+          color: kMainAccentColor,
+          linearTrackColor: kMainDarkColor,
+        ),
+        textTheme: GoogleFonts.jostTextTheme(Theme.of(context).textTheme),
+      ),
     );
   }
 }

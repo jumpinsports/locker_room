@@ -14,7 +14,7 @@ class CustomLoginScreen extends ConsumerWidget {
 
     return SafeArea(
       child: Scaffold(
-        appBar: const TitleAppBar(),
+        appBar: const TitleAppBar(backNav: ''),
         body: SignInScreen(
           providers: authProviders,
         ),

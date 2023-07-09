@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:locker_room/screens/team_select_screen.dart';
+import 'package:locker_room/screens/team_info_screen.dart';
 
 import '../screens/custom_login_screen.dart';
 import '../screens/custom_profile_screen.dart';
@@ -11,6 +14,8 @@ enum AppRoute {
   signIn,
   home,
   profile,
+  joinTeam,
+  teamInfo,
 }
 
 final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
@@ -46,7 +51,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/home',
         name: AppRoute.home.name,
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => const TeamSelectScreen(),
         routes: [
           GoRoute(
             path: 'profile',
@@ -55,6 +60,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
+      GoRoute(
+        path: '/:teamId',
+        name: AppRoute.teamInfo.name,
+        builder: (BuildContext context, GoRouterState state) {
+          final teamId = state.pathParameters['teamId']!;
+          return TeamInfoScreen(
+            teamId: teamId,
+          );
+        },
+      ),
+      // GoRoute(
+      //   path: '/joinTeam',
+      //   name: AppRoute.joinTeam.name,
+      //   builder: (context, state) => const JoinTeamScreen(),
+      // ),
     ],
   );
 });
