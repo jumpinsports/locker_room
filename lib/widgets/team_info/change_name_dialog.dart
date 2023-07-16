@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:locker_room/constants/keys.dart';
 
 import '../../constants/app_sizes.dart';
 import '../../constants/text_styles.dart';
@@ -40,14 +37,13 @@ class ChangeNameDialog extends ConsumerWidget {
             children: [
               OutlineButton(
                 function: () {
-                  print(nameController.text);
                   firestoreRepository.changeTeamName(
                       teamId, nameController.text);
                   Navigator.of(context).pop();
                 },
                 title: 'OK',
               ),
-              gapW12,
+              const Spacer(),
               OutlineButton(
                 function: () => Navigator.of(context).pop(),
                 title: 'Cancel',

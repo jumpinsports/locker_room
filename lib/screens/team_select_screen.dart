@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:locker_room/constants/text_styles.dart';
-import 'package:locker_room/widgets/title_app_bar.dart';
+import 'package:locker_room/widgets/home_scaffold.dart';
 
 import '../constants/app_sizes.dart';
 import '../data/firebase_repository.dart';
@@ -20,57 +20,55 @@ class TeamSelectScreen extends ConsumerWidget {
     final user = ref.watch(firebaseAuthProvider).currentUser;
     final firestoreRepository = ref.watch(firestoreRepositoryProvider);
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: const TitleAppBar(backNav: '/sign-in'),
-        body: FirestoreListView<Player>(
-          query: firestoreRepository.playerQuery(user!.email!),
-          errorBuilder: (context, error, stackTrace) => Center(
-            child: Text(error.toString()),
-          ),
-          emptyBuilder: (context) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                'Registration not found (yet).\n\nNote: It can take up to 48 hours after registration before the Locker Room app is available.',
-                style: kTextDark20,
-                textAlign: TextAlign.center,
-              ),
+    return HomeScaffold(
+      backNav: '/sign-in',
+      body: FirestoreListView<Player>(
+        query: firestoreRepository.playerQuery(user!.email!),
+        shrinkWrap: true,
+        errorBuilder: (context, error, stackTrace) => Center(
+          child: Text(error.toString()),
+        ),
+        emptyBuilder: (context) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Registration not found (yet).\n\nNote: It can take up to 48 hours after registration before the Locker Room app is available.',
+              style: kTextDark20,
+              textAlign: TextAlign.center,
             ),
           ),
-          itemBuilder:
-              (BuildContext context, QueryDocumentSnapshot<Player> doc) {
-            final player = doc.data();
-            return Column(
-              children: [
-                gapH20,
-                Text('Welcome ${player.first}', style: kTextDark28),
-                Text(player.email),
-                player.teams[0] == ''
-                    ? const NoTeamAssigned()
-                    : FirestoreListView<Team>(
-                        shrinkWrap: true,
-                        query: firestoreRepository.teamsQuery(player.teams[0]),
-                        errorBuilder: (context, error, stackTrace) => Center(
-                          child: Text(error.toString()),
-                        ),
-                        emptyBuilder: (context) => const Center(
-                          child: Text('no data'),
-                        ),
-                        itemBuilder: (BuildContext context,
-                            QueryDocumentSnapshot<Team> doc) {
-                          final team = doc.data();
-                          return ListTile(
-                            onTap: () => context.go('/${doc.id}'),
-                            title: Text(team.name),
-                            subtitle: Text(team.season),
-                          );
-                        },
-                      ),
-              ],
-            );
-          },
         ),
+        itemBuilder: (BuildContext context, QueryDocumentSnapshot<Player> doc) {
+          final player = doc.data();
+          return Column(
+            children: [
+              gapH20,
+              Text('Welcome ${player.first}', style: kTextDark28),
+              Text(player.email),
+              player.teams[0] == ''
+                  ? const NoTeamAssigned()
+                  : FirestoreListView<Team>(
+                      shrinkWrap: true,
+                      query: firestoreRepository.teamQuery(player.teams[0]),
+                      errorBuilder: (context, error, stackTrace) => Center(
+                        child: Text(error.toString()),
+                      ),
+                      emptyBuilder: (context) => const Center(
+                        child: Text('no data'),
+                      ),
+                      itemBuilder: (BuildContext context,
+                          QueryDocumentSnapshot<Team> doc) {
+                        final team = doc.data();
+                        return ListTile(
+                          onTap: () => context.go('/${doc.id}'),
+                          title: Text(team.name),
+                          subtitle: Text(team.season),
+                        );
+                      },
+                    ),
+            ],
+          );
+        },
       ),
     );
   }

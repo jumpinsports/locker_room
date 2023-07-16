@@ -41,7 +41,13 @@ class TitleAppBar extends StatelessWidget with PreferredSizeWidget {
           ),
           GestureDetector(
             onTap: () => context.go('/home/profile'),
-            child: Icon(Icons.person, size: 32, color: kMainLightColor),
+            child: const Icon(Icons.person, size: 32, color: kMainLightColor),
+          ),
+
+          /// FOR TESTING ONLY
+          GestureDetector(
+            onTap: () => context.go('/home/admin'),
+            child: const Icon(Icons.settings, size: 32, color: kMainLightColor),
           ),
         ],
       ),

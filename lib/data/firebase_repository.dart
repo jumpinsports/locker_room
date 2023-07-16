@@ -27,7 +27,7 @@ class FirestoreRepository {
   }
 
   /// Returns a team from the teams collection
-  Query<Team> teamsQuery(String teamId) {
+  Query<Team> teamQuery(String teamId) {
     return _firestore
         .collection('football_summer2023')
         .where(FieldPath.documentId, isEqualTo: teamId)
@@ -37,9 +37,31 @@ class FirestoreRepository {
         );
   }
 
+  /// Return the name a team from teamId
+  Future<String> teamName(String teamId) async {
+    final ref = _firestore
+        .collection('football_summer2023')
+        .where(FieldPath.documentId, isEqualTo: teamId)
+        .withConverter(
+          fromFirestore: (snapshot, _) => Team.fromMap(snapshot.data()!),
+          toFirestore: (team, _) => team.toMap(),
+        );
+    final docSnap = await ref.get();
+    final team = docSnap.docs[0].data();
+    return team.name;
+  }
+
+  /// Return a list of all teams as Team objects
+  Query<Team> teamsQuery() {
+    return _firestore.collection('football_summer2023').withConverter(
+          fromFirestore: (snapshot, _) => Team.fromMap(snapshot.data()!),
+          toFirestore: (team, _) => team.toMap(),
+        );
+  }
+
   /// Return the names of the teams from two teamIds
   /// Used to populate Game Schedule section
-  Future<List<String>> teamNames(String team1Id, String team2Id) async {
+  Future<List<String>> twoTeamNames(String team1Id, String team2Id) async {
     List<String> teamIds = [team1Id, team2Id];
     List<String> teamNames = [];
     for (String id in teamIds) {
@@ -65,7 +87,16 @@ class FirestoreRepository {
         .where('email', isEqualTo: email)
         .withConverter(
           fromFirestore: (snapshot, _) => Player.fromMap(snapshot.data()!),
-          toFirestore: (team, _) => team.toMap(),
+          toFirestore: (player, _) => player.toMap(),
+        );
+  }
+
+  /// Finds all players from the Players collection
+  /// Sorted by last name
+  Query<Player> playersQuery() {
+    return _firestore.collection('players').orderBy('last').withConverter(
+          fromFirestore: (snapshot, _) => Player.fromMap(snapshot.data()!),
+          toFirestore: (player, _) => player.toMap(),
         );
   }
 
@@ -84,6 +115,36 @@ class FirestoreRepository {
       playerList.add(thisPlayer);
     }
     return playerList;
+  }
+
+  /// Updates 'first' field of a player
+  Future<void> changePlayerFirst(String playerId, String newName) async {
+    final docRef = _firestore.collection('players').doc(playerId);
+    await docRef.update({'first': newName});
+  }
+
+  /// Updates 'last' field of a player
+  Future<void> changePlayerLast(String playerId, String newName) async {
+    final docRef = _firestore.collection('players').doc(playerId);
+    await docRef.update({'last': newName});
+  }
+
+  /// Updates 'email' field of a player
+  Future<void> changePlayerEmail(String playerId, String newEmail) async {
+    final docRef = _firestore.collection('players').doc(playerId);
+    await docRef.update({'email': newEmail});
+  }
+
+  /// Updates 'team' field of a player
+  Future<void> changePlayerTeam(
+      String playerId, String currentTeamId, String newTeamId) async {
+    final docRef = _firestore.collection('players').doc(playerId);
+    await docRef.update({
+      'teams': FieldValue.arrayRemove([currentTeamId])
+    });
+    await docRef.update({
+      'teams': FieldValue.arrayUnion([newTeamId])
+    });
   }
 
   /// Finds a player from the Players collection from their playerId

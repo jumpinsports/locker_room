@@ -16,12 +16,13 @@ class OutlineButton extends StatelessWidget {
     return GestureDetector(
       onTap: function,
       child: Container(
+        width: 100,
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
             color: kMainLightColor,
             border: Border.all(color: kMainDarkColor),
             borderRadius: BorderRadius.circular(16.0)),
-        child: Text(title, style: kTextDark20),
+        child: Text(title, style: kTextDark20, textAlign: TextAlign.center),
       ),
     );
   }

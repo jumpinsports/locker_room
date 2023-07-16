@@ -28,7 +28,7 @@ class ScheduleTile extends ConsumerWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, doc) {
               final game = doc.data();
-              var teams = firestoreRepository.teamNames(game.team1, game.team2);
+              var teams = firestoreRepository.twoTeamNames(game.team1, game.team2);
               Location location = findLocation(game.location);
 
               return FutureBuilder(
